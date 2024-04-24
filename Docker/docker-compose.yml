@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  db:
+    hostname: postgres
+    image: postgres:15
+    volumes:
+      - postgres:/data/postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres
+    network_mode: "host"
+  
+  dbadmin:
+    hostname: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    network_mode: "host"
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6378:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - /cache:/data
+
+volumes:
+  postgres:
+  pgadmin:
